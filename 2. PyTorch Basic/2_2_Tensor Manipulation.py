@@ -85,3 +85,200 @@ print(one_dim)
 print('Rank of t: ', one_dim.ndim) #몇 차원인지?
 print('Shape of t: ', one_dim.shape) #크기가 얼마인지?
 
+# NumPy기초 이해하기
+# Numpy에서 각 벡터의 원소에 접근하는 방법, NumPy에서 인덱슨느 0부터 시작
+print('one_dim[0] one_dim[1] one_dim[-1] = ', one_dim[0], one_dim[1], one_dim[-2]) # 인덱스를 통한 원소 접근
+# -1번 인덱스는 맨 뒤에서부터 시작하는 인덱스입니다.
+"""
+실행결과 : t[0] t[1] t[-1] =  0.0 1.0 5.0
+"""
+
+# 슬라이싱
+# [시작 번호:끝 번호]에서 시작 번호를 생략하면 처음부터 끝 번호까지 뽑아냅니다, 
+# 반면에 [시작 번호:끝 번호]에서 끝 번호를 생략하면 시작 번호부터 끝까지 뽑아냅니다.
+print('one_dim[:2] one_dim[3:]     = ', one_dim[:2], one_dim[3:]) # 시작 번호를 생략한 경우와 끝 번호를 생략한 경우
+"""
+실행결과 : t[:2] t[3:]     =  [0. 1.] [3. 4. 5. 6.]
+"""
+
+# 2D with Numpy
+t = np.array([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.], [10., 11., 12.]])
+print(t)
+
+"""
+실행결과
+[[ 1.  2.  3.]
+ [ 4.  5.  6.]
+ [ 7.  8.  9.]
+ [10. 11. 12.]]
+"""
+print('Rank  of t: ', t.ndim)
+print('Shape of t: ', t.shape)
+"""
+실행결과
+Rank  of t:  2
+Shape of t:  (4, 3)
+"""
+
+# 파이토치 텐서 선언하기(PyTorch Tensor Allocation)
+"""
+파이토치는 Numpy와 매우 유사함. 하지만 더 낫다??(better). 우선 Torch 임포트
+"""
+import torch
+
+# 파이토치로 1차원 텐서 만들기
+t1 = torch.FloatTensor([0., 1., 2., 3., 4., 5., 6.])
+print(t)
+
+# dim()을 사용하면 현재 텐서의 차원을 보여줍니다. shape나 size()를 사용하면 크기를 확인할 수 있습니다.
+print(t1.dim())  # rank. 즉, 차원
+print(t1.shape)  # shape
+print(t1.size()) # shape
+# 현재 1차원 텐서이고, 원소는 7개임
+
+print(t1[0], t1[1], t1[-1])  # 인덱스로 접근
+print(t1[2:5], t1[4:-1])    # 슬라이싱
+print(t1[:2], t1[3:])       # 슬라이싱
+"""
+실행결과
+tensor(0.) tensor(1.) tensor(6.)
+tensor([2., 3., 4.]) tensor([4., 5.])
+tensor([0., 1.]) tensor([3., 4., 5., 6.])
+"""
+
+# 파이토치로 2차원 텐서 만들기
+t2 = torch.FloatTensor([[1., 2., 3.],
+                       [4., 5., 6.],
+                       [7., 8., 9.],
+                       [10., 11., 12.]
+                      ])
+print(t2)
+
+print(t.dim())  # rank. 즉, 차원
+print(t.size()) # shape
+# dim()을 사용하여 현재 텐서의 차원과 size()를 사용하여 크기 확인 가능
+"""
+실행결과
+2
+torch.Size([4, 3])
+"""
+
+print(t[:, 1]) # 첫번째 차원을 전체 선택한 상황에서 두번째 차원의 첫번째 것만 가져온다.
+print(t[:, 1].size()) # ↑ 위의 경우의 크기
+"""실행결과
+tensor([ 2.,  5.,  8., 11.])
+torch.Size([4])
+"""
+
+# 2차원 텐서 슬라이징
+print(t[:, 1]) # 첫번째 차원을 전체 선택한 상황에서 두번째 차원의 첫번째 것만 가져온다.
+print(t[:, 1].size()) # ↑ 위의 경우의 크기
+
+# 실행결과
+"""
+tensor([[ 1.,  2.],
+        [ 4.,  5.],
+        [ 7.,  8.],
+        [10., 11.]])
+"""
+
+# 브로드캐스팅
+"""
+두 행렬 A, B가 있다고 가정, 행렬의 덧셈과 뺄셈을 하기위해서는 두 행렬 A, B의 크기가 같아야 함. 
+이때 파이토치에서는 자동으로 크기를 맞춰서 연산을 수행하게 만드는 브로드캐스팅이란느 기능을 제공함.
+"""
+m1 = torch.FloatTensor([[3, 3]])
+m2 = torch.FloatTensor([[2, 2]])
+print(m1 + m2)
+
+"""결과
+tensor([[5., 5.]])
+"""
+
+# 형태가 다른 텐서들의 연산
+# Vector + scalar
+m1 = torch.FloatTensor([[1, 2]])
+m2 = torch.FloatTensor([3]) # [3] -> [3, 3]
+print(m1 + m2)
+
+"""결과
+tensor([[4., 5.]])
+"""
+
+# 서로 다른 크기의 텐서들간의 연산
+# 2 x 1 Vector + 1 x 2 Vector
+m1 = torch.FloatTensor([[1, 2]])
+m2 = torch.FloatTensor([[3], [4]])
+print(m1 + m2)
+
+"""결과
+tensor([4., 5.],
+       [5., 6.]])
+"""
+"""
+내부 연산과정
+# 브로드캐스팅 과정에서 실제로 두 텐서가 어떻게 변경되는지 보겠습니다.
+[1, 2]
+==> [[1, 2],
+     [1, 2]]
+[3]
+[4]
+==> [[3, 3],
+     [4, 4]]
+==============
+4 5
+5 6
+"""
+
+
+# 자주 사용되는 기능들
+# 행렬의 곱셈과 곱셈의 차이
+# (Matrix Multiplication Vs. Multiplication)
+
+m1 = torch.FloatTensor([[1, 2], [3, 4]])
+m2 = torch.FloatTensor([[1], [2]])
+print('Shape of Matrix 1: ', m1.shape) # 2 x 2
+print('Shape of Matrix 2: ', m2.shape) # 2 x 1
+print(m1.matmul(m2)) # 2 x 1
+"""
+결과
+Shape of Matrix 1:  torch.Size([2, 2])
+Shape of Matrix 2:  torch.Size([2, 1])
+tensor([[ 5.],
+        [11.]])
+
+=> 벡터와 벡터의 곱
+"""
+
+# 벡터의 요소별 곱
+m1 = torch.FloatTensor([[1, 2], [3, 4]])
+m2 = torch.FloatTensor([[1], [2]])
+print('Shape of Matrix 1: ', m1.shape) # 2 x 2
+print('Shape of Matrix 2: ', m2.shape) # 2 x 1
+print(m1 * m2) # 2 x 2
+print(m1.mul(m2))
+"""
+결과
+Shape of Matrix 1:  torch.Size([2, 2])
+Shape of Matrix 2:  torch.Size([2, 1])
+tensor([[1., 2.],
+        [6., 8.]])
+tensor([[1., 2.],
+        [6., 8.]])
+
+=> 두 벡터간의 요소별 곱셈 연산의 결과
+
+# 브로드캐스팅 과정에서 m2 텐서가 어떻게 변경되는지 보겠습니다.
+
+[1]
+[2]
+==> [[1, 1],
+     [2, 2]]
+
+m1 행렬의 크기는 (2, 2)이고. m2 행렬의 크기는 (2, 1)이다. 이때 element-wise(각 요소별) 곱셈을 수행하면, 
+두 행렬의 크기는 브로드캐스팅이 된 후에 곱셈이 수행. 더 정확히는 여기서 m2의 크기가 변환.
+
+"""
+
+
+
